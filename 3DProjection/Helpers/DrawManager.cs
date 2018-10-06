@@ -11,12 +11,13 @@ namespace _3DProjection.Helpers
     {
         private Canvas canvas;
         private Object3D object3d;
+        private Brush brush = (Brush)(new System.Windows.Media.BrushConverter()).ConvertFromString("#4527a0");
+
+        private bool drawingLineMode = false;
+        private bool removeMode = false;
 
         private Point startDrawingMousePosition;
-        private bool isDrawingLine = false;
         private Line currentDrawingLine;
-
-        private Brush brush = (Brush)(new System.Windows.Media.BrushConverter()).ConvertFromString("#4527a0");
 
         private DrawManager()
         {
@@ -42,7 +43,7 @@ namespace _3DProjection.Helpers
             this.canvas = canv;
             this.object3d = new Object3D();
             
-            this.canvas.AddHandler(FrameworkElement.MouseDownEvent, new MouseButtonEventHandler(this.Canvas_MouseLeftButtonDown), true);
+            this.canvas.AddHandler(FrameworkElement.MouseDownEvent, new MouseButtonEventHandler(this.Canvas_MouseDown), true);
             this.canvas.MouseMove += this.Canvas_MouseMove;
         }
 
@@ -50,6 +51,27 @@ namespace _3DProjection.Helpers
         {
             Node node = this.object3d.AddNode(x, y, z);
             this.DrawNodeOZProjection(node);
+        }
+
+        public void Clear()
+        {
+            this.canvas.Children.Clear();
+            this.object3d = new Object3D();
+            this.drawingLineMode = false;
+            this.currentDrawingLine = null;
+            this.removeMode = false;
+        }
+
+        public void RemoveModeOn()
+        {
+            this.removeMode = true;
+            Mouse.OverrideCursor = Cursors.No;
+        }
+
+        public void RemoveModeOff()
+        {
+            this.removeMode = false;
+            Mouse.OverrideCursor = null;
         }
 
         private void DrawNodeOZProjection(Node node)
@@ -63,6 +85,7 @@ namespace _3DProjection.Helpers
             };
 
             this.canvas.Children.Add(circle);
+            Canvas.SetZIndex(circle, 10);
 
             circle.SetValue(Canvas.LeftProperty, (double)node.X);
             circle.SetValue(Canvas.TopProperty, (double)node.Z);
@@ -80,38 +103,48 @@ namespace _3DProjection.Helpers
 
             line.StrokeThickness = 2;
             this.canvas.Children.Add(line);
+            Canvas.SetZIndex(line, 0);
         }
 
-        private void Canvas_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Canvas_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             IInputElement clickedElement = Mouse.DirectlyOver;
-            if (!this.isDrawingLine)
+            if (this.removeMode)
             {
-                if (clickedElement is Ellipse)
-                {
-                    this.isDrawingLine = true;
-                    this.startDrawingMousePosition = e.GetPosition((Canvas)sender);
-                }
+                this.canvas.Children.Remove((UIElement)clickedElement);
             }
             else
             {
-                this.isDrawingLine = false;
-                if (clickedElement is Ellipse && this.currentDrawingLine != null)
+                if (!this.drawingLineMode)
                 {
-                    this.canvas.Children.Remove(this.currentDrawingLine);
-                    this.DrawLine(this.startDrawingMousePosition.X, this.startDrawingMousePosition.Y, e.GetPosition((Canvas)sender).X, e.GetPosition((Canvas)sender).Y);
-                    this.currentDrawingLine = null;
+                    if (clickedElement is Ellipse)
+                    {
+                        this.drawingLineMode = true;
+                        Mouse.OverrideCursor = Cursors.Pen;
+                        this.startDrawingMousePosition = e.GetPosition((Canvas)sender);
+                    }
                 }
-                else if (this.currentDrawingLine != null)
+                else
                 {
-                    this.canvas.Children.Remove(this.currentDrawingLine);
+                    this.drawingLineMode = false;
+                    Mouse.OverrideCursor = null;
+                    if (clickedElement is Ellipse && this.currentDrawingLine != null)
+                    {
+                        this.canvas.Children.Remove(this.currentDrawingLine);
+                        this.DrawLine(this.startDrawingMousePosition.X, this.startDrawingMousePosition.Y, e.GetPosition((Canvas)sender).X, e.GetPosition((Canvas)sender).Y);
+                        this.currentDrawingLine = null;
+                    }
+                    else if (this.currentDrawingLine != null)
+                    {
+                        this.canvas.Children.Remove(this.currentDrawingLine);
+                    }
                 }
             }
         }
 
         private void Canvas_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if (this.isDrawingLine)
+            if (this.drawingLineMode)
             {
                 if (this.currentDrawingLine != null)
                 {
@@ -120,8 +153,18 @@ namespace _3DProjection.Helpers
 
                 this.DrawLine(this.startDrawingMousePosition.X, this.startDrawingMousePosition.Y, e.GetPosition((Canvas)sender).X, e.GetPosition((Canvas)sender).Y - 10);
             }
+            else if(!this.removeMode)
+            {
+                IInputElement element = Mouse.DirectlyOver;
+                if (element is Ellipse)
+                {
+                    Mouse.OverrideCursor = Cursors.Hand;
+                }
+                else
+                {
+                    Mouse.OverrideCursor = null;
+                }
+            }
         }
-
-
     }
 }

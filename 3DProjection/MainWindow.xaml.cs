@@ -37,7 +37,7 @@ namespace _3DProjection
 
         private void Clear_Click(object sender, RoutedEventArgs e)
         {
-
+            DrawManager.Instance.Clear();
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
@@ -66,6 +66,20 @@ namespace _3DProjection
             }
 
             this.AddNodePopup.IsOpen = false;
+        }
+
+        private void Remove_Click(object sender, RoutedEventArgs e)
+        {
+            DrawManager.Instance.RemoveModeOn();
+            this.RemoveBtn.Visibility = Visibility.Hidden;
+            this.CancelRemoveBtn.Visibility = Visibility.Visible;
+        }
+
+        private void CancelRemove_Click(object sender, RoutedEventArgs e)
+        {
+            DrawManager.Instance.RemoveModeOff();
+            this.RemoveBtn.Visibility = Visibility.Visible;
+            this.CancelRemoveBtn.Visibility = Visibility.Hidden;
         }
     }
 }
