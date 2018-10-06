@@ -16,16 +16,5 @@ namespace _3DProjection.Models
             this.Nodes.Add(node);
             return node;
         }
-
-        public List<Node> GetOZProjection()
-        {
-            List<Node> nodes = new List<Node>();
-            foreach (Node node in this.Nodes)
-            {
-                nodes.Add(NodeFactory.GetNode2D(node.X, node.Z));
-            }
-
-            return nodes;
-        }
     }
 }

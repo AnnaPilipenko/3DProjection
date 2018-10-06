@@ -1,4 +1,5 @@
 ﻿using _3DProjection.Models;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -11,12 +12,14 @@ namespace _3DProjection.Helpers
     {
         private Canvas canvas;
         private Object3D object3d;
+        private Dictionary<UIElement, Node> elements;
         private Brush brush = (Brush)(new System.Windows.Media.BrushConverter()).ConvertFromString("#4527a0");
 
         private bool drawingLineMode = false;
         private bool removeMode = false;
 
         private Point startDrawingMousePosition;
+        private Node startDrawingNode;
         private Line currentDrawingLine;
 
         private DrawManager()
@@ -42,7 +45,8 @@ namespace _3DProjection.Helpers
         {
             this.canvas = canv;
             this.object3d = new Object3D();
-            
+            this.elements = new Dictionary<UIElement, Node>();
+
             this.canvas.AddHandler(FrameworkElement.MouseDownEvent, new MouseButtonEventHandler(this.Canvas_MouseDown), true);
             this.canvas.MouseMove += this.Canvas_MouseMove;
         }
@@ -50,12 +54,14 @@ namespace _3DProjection.Helpers
         public void AddNode(double x, double y, double z)
         {
             Node node = this.object3d.AddNode(x, y, z);
-            this.DrawNodeOZProjection(node);
+            var circle = this.DrawNodeOZProjection(node);
+            this.elements.Add(circle, node);
         }
 
         public void Clear()
         {
             this.canvas.Children.Clear();
+            this.elements.Clear();
             this.object3d = new Object3D();
             this.drawingLineMode = false;
             this.currentDrawingLine = null;
@@ -74,7 +80,7 @@ namespace _3DProjection.Helpers
             Mouse.OverrideCursor = null;
         }
 
-        private void DrawNodeOZProjection(Node node)
+        private Ellipse DrawNodeOZProjection(Node node)
         {
             Ellipse circle = new Ellipse()
             {
@@ -89,6 +95,13 @@ namespace _3DProjection.Helpers
 
             circle.SetValue(Canvas.LeftProperty, (double)node.X);
             circle.SetValue(Canvas.TopProperty, (double)node.Z);
+
+            return circle;
+        }
+
+        private void AddEdge(Node node1, Node node2)
+        {
+            node1.TryAddNeighborNode(node2);
         }
 
         private void DrawLine(double x1, double y1, double x2, double y2)
@@ -121,6 +134,8 @@ namespace _3DProjection.Helpers
                     {
                         this.drawingLineMode = true;
                         Mouse.OverrideCursor = Cursors.Pen;
+                        var node = this.elements[(UIElement)clickedElement];
+                        this.startDrawingNode = this.elements[(UIElement)clickedElement]; // e.GetPosition((Canvas)sender);
                         this.startDrawingMousePosition = e.GetPosition((Canvas)sender);
                     }
                 }
@@ -132,6 +147,9 @@ namespace _3DProjection.Helpers
                     {
                         this.canvas.Children.Remove(this.currentDrawingLine);
                         this.DrawLine(this.startDrawingMousePosition.X, this.startDrawingMousePosition.Y, e.GetPosition((Canvas)sender).X, e.GetPosition((Canvas)sender).Y);
+
+                        var endNode = this.elements[(UIElement)clickedElement];
+                        this.AddEdge(this.startDrawingNode, endNode);
                         this.currentDrawingLine = null;
                     }
                     else if (this.currentDrawingLine != null)
