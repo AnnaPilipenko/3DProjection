@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using _3DProjection.Helpers;
 
 namespace _3DProjection.Models
 {
@@ -22,6 +20,23 @@ namespace _3DProjection.Models
             this.Y = y;
             this.Z = z;
             this.NeighborNodes = new List<Node>();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj.GetType() == typeof(Node))
+            {
+                Node node = (Node)obj;
+                return this.X.Equals(node.X) && this.Y.Equals(node.Y) && this.Z.Equals(node.Z);
+            }
+
+            return false;
+        }
+
+        public bool Equals(double x, double y, double z)
+        {
+            Node node = new Node(x, y, z);
+            return this.Equals(node);
         }
 
         public void TryAddNeighborNode(double x, double y, double z)

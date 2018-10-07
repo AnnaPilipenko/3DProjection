@@ -16,5 +16,20 @@ namespace _3DProjection.Models
             this.Nodes.Add(node);
             return node;
         }
+
+        public void RotateAboutOX()
+        {
+
+        }
+
+        public void RotateAboutOY()
+        {
+
+        }
+
+        public void RotateAboutOZ()
+        {
+
+        }
     }
 }

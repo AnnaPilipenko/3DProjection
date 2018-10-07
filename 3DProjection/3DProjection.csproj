@@ -70,16 +70,18 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Helpers\DrawManager.cs" />
-    <Compile Include="Helpers\ExtensionMethod.cs" />
+    <Compile Include="Helpers\NumericExtensions.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\3DObject.cs" />
+    <Compile Include="Models\Matrix.cs" />
+    <Compile Include="Models\Object3D.cs" />
     <Compile Include="Models\Node.cs" />
     <Compile Include="Models\NodeFactory.cs" />
+    <Compile Include="Models\RotationMatrix3D.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
