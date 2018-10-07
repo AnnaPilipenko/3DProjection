@@ -92,6 +92,7 @@ namespace _3DProjection.Helpers
 
         public void DrawSmth()
         {
+            this.Clear();
             Node node1 = this.AddNode(100, 100, 100);
             Node node2 = this.AddNode(300, 100, 100);
             Node node3 = this.AddNode(200, 300, 100);

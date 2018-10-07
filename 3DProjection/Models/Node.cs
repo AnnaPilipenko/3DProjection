@@ -22,6 +22,23 @@ namespace _3DProjection.Models
             this.NeighborNodes = new List<Node>();
         }
 
+        public void SetValuesFromVector(double[] vector)
+        {
+            if (vector.Length == 3)
+            {
+                this.X = vector[0];
+                this.Y = vector[1];
+                this.Z = vector[2];
+            }
+
+            throw new Exception("Не удается конверировать вектор в узел");
+        }
+
+        public double[] ToVector()
+        {
+            return new double[3] { this.X, this.Y, this.Z };
+        }
+
         public override bool Equals(object obj)
         {
             if (obj.GetType() == typeof(Node))
