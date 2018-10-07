@@ -81,5 +81,10 @@ namespace _3DProjection
             this.RemoveBtn.Visibility = Visibility.Visible;
             this.CancelRemoveBtn.Visibility = Visibility.Hidden;
         }
+
+        private void Draw_Click(object sender, RoutedEventArgs e)
+        {
+            DrawManager.Instance.DrawSmth();
+        }
     }
 }
