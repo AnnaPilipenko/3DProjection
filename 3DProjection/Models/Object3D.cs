@@ -43,7 +43,7 @@ namespace _3DProjection.Models
 
     class Object3D
     {
-        private List<Node> Nodes { get; set; } = new List<Node>();
+        public List<Node> Nodes { get; private set; } = new List<Node>();
         private Node MassCenter { get; set; } = null;
 
         public Node AddNode(double x, double y, double z)
@@ -102,6 +102,9 @@ namespace _3DProjection.Models
 
         public void Rotate(double alpha, RotationLineEnum rotationLineEnum)
         {
+            //// Update mass center if it is null
+            this.GetMassCenter(false);
+
             //// Move the origin to the mass center
             Node prevOrigin = this.MoveTheOrigin(this.MassCenter.X, this.MassCenter.Y, this.MassCenter.Z);
 
@@ -111,7 +114,7 @@ namespace _3DProjection.Models
             //// Rotate each node about specified axis axis
             for (int i = 0; i < this.Nodes.Count; i++)
             {
-                double[] result = Matrix.Multiply(this.Nodes[i].ToVector(), rotationMatrix);
+                double[] result = Matrix.Multiply(rotationMatrix, this.Nodes[i].ToVector());
                 this.Nodes[i].SetValuesFromVector(result);
             }
 

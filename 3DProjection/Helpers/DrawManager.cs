@@ -57,6 +57,15 @@ namespace _3DProjection.Helpers
             this.canvas.MouseMove += this.Canvas_MouseMove;
         }
 
+        public Node AddExistingObjectNode(Node node)
+        {
+            var circle = this.DrawNodeOZProjection(node);
+            this.elements.Add(circle, node);
+
+            this.RedrawMassCenter();
+            return node;
+        }
+
         public Node AddNode(double x, double y, double z)
         {
             Node node = this.object3d.AddNode(x, y, z);
@@ -67,11 +76,15 @@ namespace _3DProjection.Helpers
             return node;
         }
 
-        public void Clear()
+        public void Clear(bool clearObject3D = true)
         {
             this.canvas.Children.Clear();
             this.elements.Clear();
-            this.object3d = new Object3D();
+            if (clearObject3D)
+            {
+                this.object3d = new Object3D();
+            }
+
             this.drawingLineMode = false;
             this.currentDrawingLine = null;
             this.removeMode = false;
@@ -93,19 +106,81 @@ namespace _3DProjection.Helpers
         public void DrawSmth()
         {
             this.Clear();
-            Node node1 = this.AddNode(100, 100, 100);
-            Node node2 = this.AddNode(300, 100, 100);
-            Node node3 = this.AddNode(200, 300, 100);
-            Node node4 = this.AddNode(200, 200, 300);
+            Node node1 = this.AddNode(200, 0, 200);
+            Node node2 = this.AddNode(200, 200, 200);
+            Node node3 = this.AddNode(400, 0, 200);
+            Node node4 = this.AddNode(400, 200, 200);
 
             this.AddEdge(node1, node2);
             this.AddEdge(node1, node3);
-            this.AddEdge(node1, node4);
-
-            this.AddEdge(node2, node3);
+            this.AddEdge(node3, node4);
             this.AddEdge(node2, node4);
 
-            this.AddEdge(node3, node4);
+            Node node5 = this.AddNode(200, 0, 400);
+            Node node6 = this.AddNode(200, 200, 400);
+            Node node7 = this.AddNode(400, 0, 400);
+            Node node8 = this.AddNode(400, 200, 400);
+
+            this.AddEdge(node5, node6);
+            this.AddEdge(node5, node7);
+            this.AddEdge(node7, node8);
+            this.AddEdge(node6, node8);
+
+            this.AddEdge(node1, node5);
+            this.AddEdge(node2, node6);
+            this.AddEdge(node3, node7);
+            this.AddEdge(node4, node8);
+
+            //Node node1 = this.AddNode(100, 100, 100);
+            //Node node2 = this.AddNode(300, 100, 100);
+            //Node node3 = this.AddNode(200, 300, 100);
+            //Node node4 = this.AddNode(200, 200, 300);
+
+            //this.AddEdge(node1, node2);
+            //this.AddEdge(node1, node3);
+            //this.AddEdge(node1, node4);
+
+            //this.AddEdge(node2, node3);
+            //this.AddEdge(node2, node4);
+
+            //this.AddEdge(node3, node4);
+        }
+
+        public void Rotate(double angle, RotationLineEnum rotationLine)
+        {
+            if (this.elements.Count == 0)
+            {
+                return;
+            }
+
+            double radians = angle.ToRadians();
+            this.object3d.Rotate(radians, rotationLine);
+            this.RedrawObject();
+        }
+
+        private void RedrawObject()
+        {
+            this.Clear(false);
+
+            for (int i = 0; i < this.object3d.Nodes.Count; i++)
+            {
+                this.AddExistingObjectNode(this.object3d.Nodes[i]);
+            }
+
+            for (int i = 0; i < this.object3d.Nodes.Count; i++)
+            {
+                for (int j = i + 1; j < this.object3d.Nodes.Count; j++)
+                {
+                    Node node1 = this.object3d.Nodes[i],
+                         node2 = this.object3d.Nodes[j];
+                    if (node1.NeighborNodes.Contains(node2))
+                    {
+                        this.DrawLine(node1.X + this.pointWidth / 2, node1.Z + this.pointWidth / 2, node2.X + this.pointWidth / 2, node2.Z + this.pointWidth / 2);
+                    }
+                }
+            }
+
+            this.RedrawMassCenter();
         }
 
         private void RedrawMassCenter()
@@ -180,7 +255,14 @@ namespace _3DProjection.Helpers
             IInputElement clickedElement = Mouse.DirectlyOver;
             if (this.removeMode)
             {
-                this.object3d.RemoveNode(this.elements[(UIElement)clickedElement]);
+                try
+                {
+                    this.object3d.RemoveNode(this.elements[(UIElement)clickedElement]);
+                }
+                catch
+                {
+                }
+
                 this.canvas.Children.Remove((UIElement)clickedElement);
                 this.RedrawMassCenter();
             }
@@ -190,10 +272,11 @@ namespace _3DProjection.Helpers
                 {
                     if (clickedElement is Ellipse)
                     {
+                        this.currentDrawingLine = null;
                         this.drawingLineMode = true;
                         Mouse.OverrideCursor = Cursors.Pen;
                         var node = this.elements[(UIElement)clickedElement];
-                        this.startDrawingNode = this.elements[(UIElement)clickedElement]; // e.GetPosition((Canvas)sender);
+                        this.startDrawingNode = this.elements[(UIElement)clickedElement];
                         this.startDrawingMousePosition = e.GetPosition((Canvas)sender);
                     }
                 }
@@ -211,6 +294,7 @@ namespace _3DProjection.Helpers
                     {
                         Mouse.OverrideCursor = null;
                         this.canvas.Children.Remove(this.currentDrawingLine);
+                        this.currentDrawingLine = null;
                     }
 
                     this.drawingLineMode = false;

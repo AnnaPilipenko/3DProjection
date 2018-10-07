@@ -92,22 +92,22 @@
                     CANCEL
                 </Button>
                 <StackPanel Grid.Row="6">
-                    <Slider Grid.Row="5" Minimum="-360" Maximum="360" Style="{StaticResource MaterialDesignDiscreteSlider}"     
-                            ToolTip="MaterialDesignDiscreteSlider" Value="0" Margin="0,-30,0,0" />
+                    <Slider x:Name="SliderAboutX" Grid.Row="5" Minimum="-180" Maximum="180" TickFrequency="5" Style="{StaticResource MaterialDesignDiscreteSlider}"     
+                            ToolTip="MaterialDesignDiscreteSlider" Value="0" Margin="0,-30,0,0"  ValueChanged="SliderAboutX_ValueChanged"/>
                     <TextBlock Style="{StaticResource MaterialDesignBody1TextBlock}" HorizontalAlignment="Center">
                         About X axis
                     </TextBlock>
                 </StackPanel>
                 <StackPanel Grid.Row="7">
-                    <Slider Grid.Row="5" Minimum="-360" Maximum="360" Style="{StaticResource MaterialDesignDiscreteSlider}"     
-                            ToolTip="MaterialDesignDiscreteSlider" Value="0" Margin="0,-30,0,0" />
+                    <Slider x:Name="SliderAboutY" Grid.Row="5" Minimum="-180" Maximum="180" TickFrequency="5" Style="{StaticResource MaterialDesignDiscreteSlider}"     
+                            ToolTip="MaterialDesignDiscreteSlider" Value="0" Margin="0,-30,0,0" ValueChanged="SliderAboutY_ValueChanged" />
                     <TextBlock Style="{StaticResource MaterialDesignBody1TextBlock}" HorizontalAlignment="Center">
                         About Y axis
                     </TextBlock>
                 </StackPanel>
                 <StackPanel Grid.Row="8">
-                    <Slider Grid.Row="5" Minimum="-360" Maximum="360" Style="{StaticResource MaterialDesignDiscreteSlider}"     
-                            ToolTip="MaterialDesignDiscreteSlider" Value="0" Margin="0,-30,0,0" />
+                    <Slider x:Name="SliderAboutZ" Grid.Row="5" Minimum="-180" Maximum="180"  TickFrequency="5" Style="{StaticResource MaterialDesignDiscreteSlider}"     
+                            ToolTip="MaterialDesignDiscreteSlider" Value="0" Margin="0,-30,0,0" ValueChanged="SliderAboutZ_ValueChanged" />
                     <TextBlock Style="{StaticResource MaterialDesignBody1TextBlock}" HorizontalAlignment="Center">
                         About Z axis
                     </TextBlock>

@@ -30,8 +30,10 @@ namespace _3DProjection.Models
                 this.Y = vector[1];
                 this.Z = vector[2];
             }
-
-            throw new Exception("Не удается конверировать вектор в узел");
+            else
+            {
+                throw new Exception("Не удается конверировать вектор в узел");
+            }
         }
 
         public double[] ToVector()
@@ -75,7 +77,7 @@ namespace _3DProjection.Models
             }
             else
             {
-                throw new Exception("The node already contains this neighbor.");
+                //throw new Exception("The node already contains this neighbor.");
             }
         }
     }

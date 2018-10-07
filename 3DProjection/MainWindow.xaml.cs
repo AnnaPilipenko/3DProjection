@@ -21,6 +21,9 @@ namespace _3DProjection
     /// </summary>
     public partial class MainWindow : Window
     {
+        private double currentDrawingAngleX = 0;
+        private double currentDrawingAngleY = 0;
+        private double currentDrawingAngleZ = 0;
         public MainWindow()
         {
             InitializeComponent();
@@ -29,6 +32,7 @@ namespace _3DProjection
 
         private void AddNode_Click(object sender, RoutedEventArgs e)
         {
+            Mouse.OverrideCursor = null;
             this.XTextPopup.Text = string.Empty;
             this.YTextPopup.Text = string.Empty;
             this.ZTextPopup.Text = string.Empty;
@@ -37,11 +41,15 @@ namespace _3DProjection
 
         private void Clear_Click(object sender, RoutedEventArgs e)
         {
+            Mouse.OverrideCursor = null;
             DrawManager.Instance.Clear();
+            this.currentDrawingAngleX = this.currentDrawingAngleY = this.currentDrawingAngleZ = 0;
+            this.SliderAboutX.Value = this.SliderAboutY.Value = this.SliderAboutZ.Value = 0;
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
+            Mouse.OverrideCursor = null;
             Application.Current.Shutdown();
         }
 
@@ -84,7 +92,35 @@ namespace _3DProjection
 
         private void Draw_Click(object sender, RoutedEventArgs e)
         {
+            Mouse.OverrideCursor = null;
             DrawManager.Instance.DrawSmth();
+        }
+
+        private void SliderAboutX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Mouse.OverrideCursor = null;
+
+            Slider slider = (Slider)sender;
+            DrawManager.Instance.Rotate(slider.Value - currentDrawingAngleX, Models.RotationLineEnum.AboutOX);
+            currentDrawingAngleX = slider.Value;
+        }
+
+        private void SliderAboutY_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Mouse.OverrideCursor = null;
+
+            Slider slider = (Slider)sender;
+            DrawManager.Instance.Rotate(slider.Value - currentDrawingAngleY, Models.RotationLineEnum.AboutOY);
+            currentDrawingAngleY = slider.Value;
+        }
+
+        private void SliderAboutZ_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Mouse.OverrideCursor = null;
+
+            Slider slider = (Slider)sender;
+            DrawManager.Instance.Rotate(slider.Value - currentDrawingAngleZ, Models.RotationLineEnum.AboutOZ);
+            currentDrawingAngleZ = slider.Value;
         }
     }
 }

@@ -26,7 +26,7 @@ namespace _3DProjection.Models
             return result;
         }
 
-        public static double[] Multiply(double[] a, double[,] b)
+        public static double[] Multiply(double[,] b, double[] a)
         {
             double[,] c = new double[a.Length, 1];
             for (int i = 0; i < a.Length; i++)
@@ -34,7 +34,7 @@ namespace _3DProjection.Models
                 c[i, 0] = a[i];
             }
 
-            double[,] result = Matrix.Multiply(c, b);
+            double[,] result = Matrix.Multiply(b, c);
             double[] newResult = new double[result.GetLength(0)];
             for (int i = 0; i < result.GetLength(0); i++)
             {
